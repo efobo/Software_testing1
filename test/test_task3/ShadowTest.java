@@ -2,53 +2,61 @@ package test_task3;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import task3.Ghost;
-import task3.Human;
-import task3.Place;
-import task3.Shadow;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import task3.*;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ShadowTest {
 
-    @Test
-    public void Constructor_NoExcept() {
-        new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
+    public Shadow initShadow(String name, String placeName, int placeLight){
+        Place place = new Place(placeName, placeLight);
+        Shadow shadow = new Shadow(name, place);
+        return shadow;
     }
 
-    @Test
-    public void Kill_AssertEquals() {
-        Shadow cornel = new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
-        Ghost valera = new Ghost("Valera", Place.CHEERFUL_PLACE, 1000);
-        assertEquals("Shadow Cornel killed Ghost Valera", cornel.kill(valera));
 
-        assertEquals("Shadow Cornel killed itself :(", cornel.kill(cornel));
+
+    @ParameterizedTest
+    @ArgumentsSource(ShadowTest.shadowArgsProvider.class)
+    public void GetName_AssertEquals(String name, String placeName, int placeLight) {
+        Shadow cornel = initShadow(name, placeName, placeLight);
+
+        assertEquals(name, cornel.getName());
     }
 
-    @Test
-    public void GetName_AssertEquals() {
-        Shadow cornel = new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
-        assertEquals("Cornel", cornel.getName());
+
+    @ParameterizedTest
+    @ArgumentsSource(ShadowTest.shadowArgsProvider.class)
+    public void WhereIs_AssertEquals(String name, String placeName, int placeLight) {
+        Shadow shadow = initShadow(name, placeName, placeLight);
+        if (placeLight > 80) {
+            assertEquals(PlaceCharacteristic.Light + " " + placeName, shadow.whereIs());
+        } else if (placeLight < 40) {
+            assertEquals(PlaceCharacteristic.Gloomy + " " + placeName, shadow.whereIs());
+        } else {
+            assertEquals(PlaceCharacteristic.Dark + " " + placeName, shadow.whereIs());
+        }
     }
 
-    @Test
-    public void GetMoney_AssertEquals() {
-        Shadow cornel = new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
-        assertEquals(1000, cornel.getMoney());
+
+    static class shadowArgsProvider implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+            return Stream.of(
+                    // check array sort
+                    Arguments.of("Janna", "park", 100),
+                    Arguments.of("Mark", "park", 10),
+                    Arguments.of("Mark", "park", 60));
+        }
     }
 
-    @Test
-    public void WhereIs_AssertEquals() {
-        Shadow cornel = new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
-        assertEquals(Place.GLOOMY_PLACE, cornel.whereIs());
-    }
 
-    @Test
-    public void WantToPay_AssertEquals() {
-        Shadow cornel = new Shadow("Cornel", Place.GLOOMY_PLACE, 1000);
-        assertEquals("Shadow Cornel wants to pay for Snickers", cornel.wantToPay("Snickers", 10));
-        cornel.setMoney(0);
-        assertEquals("Shadow Cornel doesn't have enough money for Snickers", cornel.wantToPay("Snickers", 10));
-    }
 }

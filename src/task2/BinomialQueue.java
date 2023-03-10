@@ -141,11 +141,11 @@ public final class BinomialQueue<T extends Comparable<? super T>> {
 
     /**
      * Find the smallest item in the priority queue.
-     * @return the smallest item, or throw UnderflowException if empty.
+     * @return the smallest item, or throw Exception if empty.
      */
-    public T findMin() throws UnderflowException {
+    public T findMin() throws Exception {
         if(isEmpty()) {
-            throw new UnderflowException();
+            throw new Exception();
         }
         return theTrees[findMinIndex()].element;
     }
@@ -170,11 +170,11 @@ public final class BinomialQueue<T extends Comparable<? super T>> {
 
     /**
      * Remove the smallest item from the priority queue.
-     * @return the smallest item, or throw UnderflowException if empty.
+     * @return the smallest item, or throw Exception if empty.
      */
-    public T deleteMin() throws UnderflowException {
+    public T deleteMin()  {
         if(isEmpty()) {
-            throw new UnderflowException();
+            throw new RuntimeException();
         }
         int minIndex = findMinIndex();
         T minItem = theTrees[minIndex].element;

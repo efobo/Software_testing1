@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import task1.Cosine;
 import task2.BinomialQueue;
-import task2.UnderflowException;
+
 
 import java.util.stream.Stream;
 
@@ -34,12 +34,7 @@ public class BinomialQueueTest {
 
         h.merge(h1);
         for(i = 1; i < numItems; i++) {
-            try {
                 Assertions.assertEquals(h.deleteMin(), i);
-            } catch (UnderflowException e) {
-                e.printStackTrace();
-            }
-
         }
 
     }
